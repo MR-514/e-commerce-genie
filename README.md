@@ -48,26 +48,25 @@ To verify installations:
 node -v
 npm -v
 git --version
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 Installation
 Clone the repository:
 git clone https://github.com/sohailayan/e-commerce-genie.git or https://github.com/MR-514/e-commerce-genie.git
 cd e-commerce-genie
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 Install dependencies:
 
 npm install
 # or use pnpm if installed
 # pnpm install
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 Run the development server:
 
 npm run dev
 Open http://localhost:3000 in your browser.
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Future Plans
 Integration with real-time APIs (Amazon, Flipkart, etc.)
@@ -75,7 +74,6 @@ Integration with real-time APIs (Amazon, Flipkart, etc.)
 Personalized product recommendations
 
 User authentication and wishlist features
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Screenshots
 
