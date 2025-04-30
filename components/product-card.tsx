@@ -38,16 +38,19 @@ function extractUrlsFromMarkdown(markdownText: string): string[] {
 
 
 export default function ProductCard({ product }: ProductCardProps) {
+
+  
   let price = toNumber(product.price)
   let originalPrice = toNumber(product.originalPrice)
-  const showDiscount = originalPrice !== null && price !== null && originalPrice > price
-  const discount = showDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : null
-
   if (price === null || price === 0) {
     price = originalPrice
     originalPrice = null
   }
 
+  const showDiscount = originalPrice !== null && price !== null && originalPrice > price
+  const discount = showDiscount ? Math.round(((originalPrice - price) / originalPrice) * 100) : null
+
+ 
   const brand = product.Brand || getFirstWord(product.name)
   const description = product.Description || getRestOfName(product.name)
   const imageUrl = product.URL_image || product.image
@@ -106,10 +109,22 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <span className="font-bold">₹{price}</span>
-              {originalPrice !== null && originalPrice > price && price !== 0 && (
-                <span className="text-sm text-gray-500 line-through">₹{originalPrice}</span>
-              )}
+            <div className="flex items-center space-x-2">
+  {product["Discount Price (in Rs.)"] && product["Product Price"] ? (
+    <>
+      <span className="font-bold">₹{product["Discount Price (in Rs.)"]}</span>
+      <span className="text-sm text-gray-500 line-through">₹{product["Product Price"]}</span>
+    </>
+  ) : (
+    <>
+      <span className="font-bold">₹{price}</span>
+      {originalPrice !== null && originalPrice > price && price !== 0 && (
+        <span className="text-sm text-gray-500 line-through">₹{originalPrice}</span>
+      )}
+    </>
+  )}
+</div>
+
             </div>
 
             {showDiscount && discount !== null && (

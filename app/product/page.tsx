@@ -81,21 +81,6 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              <div className="mb-6">
-                <h3 className="font-medium mb-2">Color</h3>
-                <div className="flex items-center space-x-2">
-                  <div
-                    className="w-8 h-8 rounded-full border border-gray-300"
-                    style={{ backgroundColor: product.Color }}
-                  />
-                  <span className="capitalize">{product.Color}</span>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <h3 className="font-medium mb-2">Category</h3>
-                <span className="px-3 py-1 bg-gray-100 rounded-full">{product.Category_by_gender}</span>
-              </div>
 
               <div className="space-y-3">
               <a
