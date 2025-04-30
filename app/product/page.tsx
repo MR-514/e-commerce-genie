@@ -98,12 +98,17 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="space-y-3">
-                <Button className="w-full">Add to Cart</Button>
-                <Button variant="outline" className="w-full">
-                  <Link href={product.Product_URL} className="w-full">
-                    View Original
-                  </Link>
-                </Button>
+              <a
+  href={product.Product_URL}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="w-full"
+>
+  <Button variant="outline" className="w-full">
+    View Original
+  </Button>
+</a>
+
               </div>
             </div>
           </div>

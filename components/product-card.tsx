@@ -36,6 +36,7 @@ function extractUrlsFromMarkdown(markdownText: string): string[] {
   return matches
 }
 
+
 export default function ProductCard({ product }: ProductCardProps) {
   let price = toNumber(product.price)
   let originalPrice = toNumber(product.originalPrice)
@@ -51,24 +52,33 @@ export default function ProductCard({ product }: ProductCardProps) {
   const description = product.Description || getRestOfName(product.name)
   const imageUrl = product.URL_image || product.image
 
-  // ✅ This is what we want to STORE
-  const externalUrl = product.link || product.Product_URL || extractUrlsFromMarkdown(product.markdownText || "")[0] || ""
+  const externalUrl =
+  product.link ||
+  product.Product_URL ||
+  extractUrlsFromMarkdown(product.markdownText || "")[0] ||
+  ""
 
   const handleClick = () => {
     if (typeof window !== "undefined") {
       const markdownText = product.markdownText || ""
       const extractedUrls = extractUrlsFromMarkdown(markdownText)
 
+      
+      console.log("Markdown:", markdownText)
+      console.log("Extracted URLs:", extractedUrls)
+      console.log("Final external URL:", externalUrl)
+      
       const productToStore = {
         ...product,
         Brand: brand,
         Description: description,
         "Discount Price (in Rs.)": price,
         "Product Price": originalPrice ?? price,
-        Product_URL: externalUrl,  // ✅ Save external URL only, not internal
+        Product_URL: externalUrl ,  // ✅ Save external URL only, not internal
         URL_image: imageUrl,
         ExtractedURLs: extractedUrls,
       }
+      
 
       localStorage.setItem("selectedProduct", JSON.stringify(productToStore))
     }

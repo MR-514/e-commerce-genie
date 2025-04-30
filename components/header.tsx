@@ -28,7 +28,7 @@ export default function Header() {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8">
-            <h1 className="text-xl font-bold">E Commerce Ginie</h1>
+            <h1 className="text-xl font-bold">E Commerce Genie</h1>
 
             <nav className="hidden md:flex space-x-6">
               <Link href="/" className="text-gray-600 hover:text-gray-900">

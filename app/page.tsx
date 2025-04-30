@@ -33,34 +33,35 @@ export default function Home() {
 
   useEffect(() => {
     if (!botProducts || typeof botProducts !== "string") return;
-
+  
     const parsed = botProducts
       .trim()
-      .split(/\n\s*\n/)
+      .split(/\n\s*\n/) // Split data by two newlines to separate different products
       .map((block: string) => {
-        const nameMatch = block.match(/\*\*(.*?)\*\*/);
-        const currentPriceMatch = block.match(/for ₹([\d,]+)/);
-        const originalPriceMatch = block.match(/~~₹([\d,]+)~~/);
-        const imageMatch = block.match(/!\[.*?\]\((.*?)\)/);
-        const linkMatch = block.match(/\[Product Link\]\((.*?)\)/);
-
-        // Map to Product type, including placeholders for missing fields
+        const nameMatch = block.match(/\*\*(.*?)\*\*/);  // Extract product name enclosed in ** **
+        const currentPriceMatch = block.match(/for ₹([\d,]+)/); // Extract current price
+        const originalPriceMatch = block.match(/~~₹([\d,]+)~~/); // Extract original price, marked with ~~ ~~ 
+        const imageMatch = block.match(/!\[.*?\]\((.*?)\)/);  // Extract image URL in markdown format
+        const linkMatch = block.match(/\[.*?Product.*?\]\((.*?)\)/i); // case-insensitive match for 'Product'
+  
+        // Map to the Product type, including placeholders for missing fields
         return {
           name: nameMatch?.[1] || "",
           price: currentPriceMatch?.[1] || "",
           originalPrice: originalPriceMatch?.[1] || null,
           image: imageMatch?.[1] || "",
           Product_URL: linkMatch?.[1] || "",
-          Brand: "", // Add a placeholder or fetch actual data
-          Description: "", // Add a placeholder or fetch actual data
-          Id_Product: "", // Add a placeholder or fetch actual data
-          // Add other missing fields if needed
+          Brand: "", // Placeholder, could fetch actual data if needed
+          Description: "", // Placeholder, could fetch actual data if needed
+          Id_Product: "", // Placeholder, could fetch actual data if needed
+          // Add other missing fields as needed
         };
       });
-console.log("parsed",parsed)
+  
+    console.log("parsed", parsed);
     setParsedBotProducts(parsed);
   }, [botProducts]);
-
+  
   // Calculate pagination
   const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE)
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE
@@ -148,7 +149,13 @@ console.log("parsed",parsed)
           />
 
           {/* Pagination */}
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          {parsedBotProducts.length === 0 && (
+  <Pagination
+    currentPage={currentPage}
+    totalPages={totalPages}
+    onPageChange={handlePageChange}
+  />
+)}
         </div>
 
         {/* Chat window - rendered conditionally with fixed positioning */}
