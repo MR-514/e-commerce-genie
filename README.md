@@ -59,12 +59,11 @@ cd e-commerce-genie
 Install dependencies:
 
 npm install
-# or use pnpm if installed
-# pnpm install
+ or use pnpm if installed
+ pnpm install
 
 
 Run the development server:
-
 npm run dev
 Open http://localhost:3000 in your browser.
 
