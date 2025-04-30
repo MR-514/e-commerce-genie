@@ -1,31 +1,54 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode } from "react"
+import React, { createContext, useState, useContext, ReactNode } from "react"
 
-interface SearchContextType {
+interface Product {
+  id: string
+  name: string
+  price: number
+  originalPrice?: number
+  image?: string
+  url: string
+  discount?: string
+}
+
+interface SearchContextProps {
   searchQuery: string
   setSearchQuery: (query: string) => void
   isChatOpen: boolean
   setIsChatOpen: (isOpen: boolean) => void
+  apiProducts: Product[]
+  setApiProducts: (products: Product[]) => void
 }
 
-const SearchContext = createContext<SearchContextType | undefined>(undefined)
+const SearchContext = createContext<SearchContextProps>({
+  searchQuery: "",
+  setSearchQuery: () => {},
+  isChatOpen: false,
+  setIsChatOpen: () => {},
+  apiProducts: [],
+  setApiProducts: () => {},
+})
 
-export function SearchProvider({ children }: { children: ReactNode }) {
+export const SearchProvider = ({ children }: { children: ReactNode }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [apiProducts, setApiProducts] = useState<Product[]>([])
 
   return (
-    <SearchContext.Provider value={{ searchQuery, setSearchQuery, isChatOpen, setIsChatOpen }}>
+    <SearchContext.Provider
+      value={{
+        searchQuery,
+        setSearchQuery,
+        isChatOpen,
+        setIsChatOpen,
+        apiProducts,
+        setApiProducts,
+      }}
+    >
       {children}
     </SearchContext.Provider>
   )
 }
 
-export function useSearchContext() {
-  const context = useContext(SearchContext)
-  if (context === undefined) {
-    throw new Error("useSearchContext must be used within a SearchProvider")
-  }
-  return context
-}
+export const useSearchContext = () => useContext(SearchContext)

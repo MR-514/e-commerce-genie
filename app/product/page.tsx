@@ -1,26 +1,31 @@
 "use client"
 
-import Link from "next/link"
-import Image from "next/image"
+import { useEffect, useState } from "react"
+import { useSearchContext } from "@/context/search-context"
 import { ArrowLeft } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
 import Header from "@/components/header"
 import ChatWindow from "@/components/chat-window"
 import ChatButton from "@/components/chat-button"
-import { products } from "@/data/products"
 import { Button } from "@/components/ui/button"
-import { useSearchContext } from "@/context/search-context"
-import { useEffect, useState } from "react"
+import { Product } from "@/types/product" // Ensure this import exists
 
-interface ProductDetailPageProps {
-  params: {
-    id: string
-  }
-}
-
-export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const product = products.find((p) => p.Id_Product === params.id)
+export default function ProductDetailPage() {
+  const [product, setProduct] = useState<Product | null>(null)
   const { isChatOpen } = useSearchContext()
   const [widthClass, setWidthClass] = useState("md:w-full")
+  const [botProducts, setBotProducts] = useState<Product[]>([])
+
+  // Load selected product from local storage
+  useEffect(() => {
+    const stored = localStorage.getItem("selectedProduct")
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      setProduct(parsed)
+      setBotProducts([parsed]) // optional: pass it to chat
+    }
+  }, [])
 
   useEffect(() => {
     setWidthClass(isChatOpen ? "md:w-3/5 lg:w-3/4" : "md:w-full")
@@ -30,18 +35,17 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     return <div>Product not found</div>
   }
 
+  const discount =
+    product["Product Price"] > product["Discount Price (in Rs.)"]
+      ? Math.round((1 - product["Discount Price (in Rs.)"] / product["Product Price"]) * 100)
+      : null
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
 
       <main className="flex flex-1 relative">
-        <div
-          className={`w-full transition-all duration-300 ${
-            isChatOpen
-              ? "md:w-[calc(100%-24rem-3rem)]" // Account for both chat width and collapsed facets
-              : "md:w-full"
-          } p-6 overflow-y-auto`}
-        >
+        <div className={`${widthClass} transition-all duration-300 p-6 overflow-y-auto`}>
           <Link href="/" className="inline-flex items-center text-blue-600 mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to products
@@ -49,12 +53,18 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="relative h-[500px] bg-gray-100 rounded-lg overflow-hidden">
-              <Image
-                src={product.URL_image || "/placeholder.svg"}
-                alt={product.Description}
-                fill
-                className="object-contain"
-              />
+              {(product.URL_image || product.image) ? (
+                <Image
+                  src={product.URL_image || product.image}
+                  alt={product.Description || product.name}
+                  fill
+                  className="object-contain"
+                />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center text-gray-400">
+                  No Image
+                </div>
+              )}
             </div>
 
             <div>
@@ -64,9 +74,11 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               <div className="flex items-center space-x-3 mb-6">
                 <span className="text-2xl font-bold">₹{product["Discount Price (in Rs.)"]}</span>
                 <span className="text-gray-500 line-through">₹{product["Product Price"]}</span>
-                <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">
-                  {Math.round((1 - product["Discount Price (in Rs.)"] / product["Product Price"]) * 100)}% OFF
-                </span>
+                {discount !== null && (
+                  <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">
+                    {discount}% OFF
+                  </span>
+                )}
               </div>
 
               <div className="mb-6">
@@ -88,7 +100,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               <div className="space-y-3">
                 <Button className="w-full">Add to Cart</Button>
                 <Button variant="outline" className="w-full">
-                  <Link href={product.Product_URL} target="_blank" className="w-full">
+                  <Link href={product.Product_URL} className="w-full">
                     View Original
                   </Link>
                 </Button>
@@ -97,11 +109,10 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           </div>
         </div>
 
-        {/* Chat window - rendered conditionally */}
-        {isChatOpen && <ChatWindow />}
+        {/* ✅ Fix: Pass setBotProducts if needed */}
+        {isChatOpen && <ChatWindow updateBotProducts={setBotProducts} />}
       </main>
 
-      {/* Floating chat button */}
       <ChatButton />
     </div>
   )

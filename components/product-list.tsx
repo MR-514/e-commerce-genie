@@ -6,11 +6,16 @@ interface ProductListProps {
 }
 
 export default function ProductList({ products }: ProductListProps) {
+  console.log("list",products)
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products.map((product) => (
-        <ProductCard key={product.Id_Product} product={product} />
-      ))}
+      {products.map((product, index) => (
+  <ProductCard
+    key={product.Id_Product || `fallback-${index}`}
+    product={product}
+  />
+))}
+
     </div>
   )
 }

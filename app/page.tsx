@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Header from "@/components/header"
 import ChatWindow from "@/components/chat-window"
 import ProductList from "@/components/product-list"
@@ -13,8 +13,53 @@ import CollapsibleFacets from "@/components/collapsible-facets"
 
 const PRODUCTS_PER_PAGE = 10
 
+interface Product {
+  name: string;
+  price: string;
+  originalPrice: string | null;
+  image: string;
+  link: string;
+  Product_URL: string;
+  Brand: string;
+  Description: string;
+  Id_Product: string;
+  // Add other fields as required
+}
+
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1)
+  const [botProducts, setBotProducts] = useState<string>("")
+  const [parsedBotProducts, setParsedBotProducts] = useState<Product[]>([])
+
+  useEffect(() => {
+    if (!botProducts || typeof botProducts !== "string") return;
+
+    const parsed = botProducts
+      .trim()
+      .split(/\n\s*\n/)
+      .map((block: string) => {
+        const nameMatch = block.match(/\*\*(.*?)\*\*/);
+        const currentPriceMatch = block.match(/for ₹([\d,]+)/);
+        const originalPriceMatch = block.match(/~~₹([\d,]+)~~/);
+        const imageMatch = block.match(/!\[.*?\]\((.*?)\)/);
+        const linkMatch = block.match(/\[Product Link\]\((.*?)\)/);
+
+        // Map to Product type, including placeholders for missing fields
+        return {
+          name: nameMatch?.[1] || "",
+          price: currentPriceMatch?.[1] || "",
+          originalPrice: originalPriceMatch?.[1] || null,
+          image: imageMatch?.[1] || "",
+          Product_URL: linkMatch?.[1] || "",
+          Brand: "", // Add a placeholder or fetch actual data
+          Description: "", // Add a placeholder or fetch actual data
+          Id_Product: "", // Add a placeholder or fetch actual data
+          // Add other missing fields if needed
+        };
+      });
+console.log("parsed",parsed)
+    setParsedBotProducts(parsed);
+  }, [botProducts]);
 
   // Calculate pagination
   const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE)
@@ -39,11 +84,7 @@ export default function Home() {
 
         {/* Product listing area (adjusts width based on screen size and chat state) */}
         <div
-          className={`w-full transition-all duration-300 ${
-            useSearchContext().isChatOpen
-              ? "md:w-[calc(100%-24rem-3rem)]" // Account for both chat width and collapsed facets
-              : "md:w-[calc(100%-16rem)]"
-          } p-4 overflow-y-auto`}
+          className={`w-full transition-all duration-300 ${useSearchContext().isChatOpen ? "md:w-[calc(100%-24rem-3rem)]" : "md:w-[calc(100%-16rem)]"} p-4 overflow-y-auto`}
         >
           {/* Banner */}
           <div className="mb-6 rounded-lg overflow-hidden">
@@ -101,14 +142,17 @@ export default function Home() {
             <MobileFacets />
           </div>
 
-          <ProductList products={paginatedProducts} />
+          {/* ProductList */}
+          <ProductList
+            products={parsedBotProducts.length > 0 ? parsedBotProducts : paginatedProducts}
+          />
 
           {/* Pagination */}
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>
 
         {/* Chat window - rendered conditionally with fixed positioning */}
-        {useSearchContext().isChatOpen && <ChatWindow />}
+        {useSearchContext().isChatOpen && <ChatWindow updateBotProducts={setBotProducts} />}
       </main>
 
       {/* Floating chat button */}
