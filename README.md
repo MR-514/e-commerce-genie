@@ -25,7 +25,8 @@
 
 ## Project Structure
 
-e-commerce-genie/ ├── app/ # Next.js app directory │ ├── page.tsx # Home page │ ├── layout.tsx # Layout component │ └── global.css # Global styles ├── public/ # Static files (images, etc.) ├── tsconfig.json # TypeScript configuration ├── package.json # Project dependencies and scripts └── README.md # Project documentation
+
+<pre> ``` e-commerce-genie/ ├── app/ # Next.js app directory │ ├── page.tsx # Home page component │ ├── layout.tsx # Layout file │ └── global.css # Global styles ├── public/ # Static assets ├── tsconfig.json # TypeScript config ├── package.json # Project dependencies └── README.md # Project documentation ``` </pre>
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
